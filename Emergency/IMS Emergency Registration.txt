@@ -1,4 +1,7 @@
 ### IMS Emergency registration ####
+
+title <size:15><color:#black>IMS Emergency registration.</size>
+
 participant UE
 participant EPC
 participant eNodeB
