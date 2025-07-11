@@ -1,0 +1,61 @@
+### NG911 Unauthenticated Emergency Call Establishment ####
+
+title <size:15><color:#black>NG911 Unauthenticated Emergency Call Establishment</size>
+
+participant UE
+participant eNB
+participant MME
+participant SGW
+participant PGW
+participant PCRF
+participant P-CSCF
+participant E-CSCF
+participant LRF
+participant IBCF
+participant NGCS/PSAP
+
+
+
+UE -> P-CSCF: 1. SIP INVITE \n//SOS URN\nAnonymous \nPPI=IMEI//
+P-CSCF -> PCRF: 2. AAR \n//Subscribe User ID//
+PCRF -> PGW: 3. RAR \n//User Location//
+P-CSCF <- PCRF: 4. AAA \n//ACK//
+PCRF <- PGW: 5. RAA
+PCRF -> P-CSCF: 6. RAR\n//No user ID//  
+P-CSCF -> E-CSCF:      7. SIP INVITE \n//     SOS URN \nPPI=<IMEI from Contact header>\n@ims.mnc302.720..3gppnetowork.org//
+E-CSCF -> LRF:     8. SIP INVITE \n//     SOS URN\n PAI=sip:+1911<last 7-digits IMEI>\n @ims.mnc302.720..3gppnetowork.org
+E-CSCF <- LRF: 9. 3xx \n//NGCS URN//
+box over E-CSCF, LRF #white:<color:#black>10. SUBSCRIBE/NOFY \n //     Call State//
+E-CSCF -> IBCF: 11. SIP INVITE \n//NGCS URN//
+IBCF -> NGCS/PSAP: 12. SIP INVITE \n//NGCS URN//
+
+linear
+IBCF <- NGCS/PSAP: 13. 180 Ringing
+E-CSCF <- IBCF: 13. 180 Ringing
+P-CSCF <- E-CSCF: 13. 180 Ringing
+UE <- P-CSCF: 13. 180 Ringing
+linear off
+
+
+linear
+IBCF <- NGCS/PSAP: 14. 200OK (INVITE)
+E-CSCF <- IBCF: 14. 200OK (INVITE)
+P-CSCF <- E-CSCF: 14. 200OK (INVITE)
+linear off
+
+P-CSCF -> PCRF: 15. AAR
+PCRF -> PGW: 16. RAR
+P-CSCF <- PCRF: 17. AAA
+PCRF <- PGW: 18. RAA
+
+
+box over UE, PGW #white:<color:#black>19. EPS bearer update \n //QCI-1, ARP (emergency)//
+
+UE <- P-CSCF: 20. 200OK (INVITE)
+
+linear
+UE -> P-CSCF: 21. ACK (200OK)
+P-CSCF -> E-CSCF: 21. ACK (200OK)
+E-CSCF -> IBCF: 21. ACK (200OK)
+IBCF -> NGCS/PSAP: 21. ACK (200OK)
+linear off
