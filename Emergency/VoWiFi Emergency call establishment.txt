@@ -1,0 +1,95 @@
+### VoWiFi Emergency call establishment ####
+
+title <size:15><color:#black>VoWiFi Emergency call establishment</size>
+
+participant UE
+participant eNB
+participant MME
+participant SGW
+participant PGW
+participant PCRF
+participant P-CSCF
+participant E-CSCF
+participant LRF
+participant MSC
+participant ILEC/PSAP
+
+
+
+UE -> P-CSCF: 1. SIP INVITE \n//  Sos URN\n  PANI=IEEE-802.11//
+P-CSCF -> E-CSCF: 2. SIP INVITE \n//  Sos URN\n  PANI=IEEE-802.11//
+E-CSCF -> LRF: 3. SIP INVITE \n//Sos URN, PAI/PPI//
+E-CSCF <- LRF: 4. 404 Not Found
+box over E-CSCF, LRF #white:<color:#black>5. SUBSCRIBE/NOFY \n //Call State//
+E-CSCF -> MSC: 5. SIP INVITE \n//Default PSAP e.164//
+MSC -> ILEC/PSAP: 6. IAM \n//Northern 911//
+MSC <- ILEC/PSAP: 7. ACM
+E-CSCF <- MSC: 8. 183 SP \n//SDP answer//
+P-CSCF <- E-CSCF: 9. 183 SP \n//SDP answer//
+P-CSCF -> PCRF: 10. AAR \n//ARP Emergency//
+PCRF -> PGW: 11. RAR \n//ARP Emergency//
+P-CSCF <- PCRF: 12. AAA \n//ARP Emergency//
+PCRF <- PGW: 13. RAA
+box over UE, PGW #white:<color:#black>14. EPS resource reservation \n //QCI-1, ARP (emergency)//
+UE <- P-CSCF: 15. 183 SP \n//SDP answer//
+
+linear
+UE -> P-CSCF: 16. PRACK (183)
+P-CSCF -> E-CSCF: 16. PRACK (183)
+E-CSCF -> MSC: 16. PRACK (183)
+MSC -> ILEC/PSA
+linear off
+
+linear
+MSC <- ILEC/PSAP
+E-CSCF <- MSC: 17. 200 OK (PRACK)
+P-CSCF <- E-CSCF: 17. 200 OK (PRACK)
+UE <- P-CSCF: 17. 200 OK (PRACK)
+linear off
+
+
+linear
+UE -> P-CSCF: 18. UPDATE
+P-CSCF -> E-CSCF: 18. UPDATE
+E-CSCF -> MSC: 18. UPDATE
+MSC -> ILEC/PSAP
+linear off
+
+linear
+
+MSC <- ILEC/PSAP
+E-CSCF <- MSC: 19. 200 OK (UPDATE)
+P-CSCF <- E-CSCF: 19. 200 OK (UPDATE)
+UE <- P-CSCF: 19. 200 OK (UPDATE)
+linear off
+
+linear
+MSC <- ILEC/PSAP
+E-CSCF <- MSC: 20. 180 Ringing
+P-CSCF <- E-CSCF: 20. 180 Ringing
+UE <- P-CSCF: 20. 180 Ringing
+linear off
+
+
+linear
+MSC <- ILEC/PSAP: 21: ANM
+E-CSCF <- MSC: 21. 200OK (INVITE)
+P-CSCF <- E-CSCF: 21. 200OK (INVITE)
+linear off
+
+P-CSCF -> PCRF: 22. AAR
+PCRF -> PGW: 23. RAR
+P-CSCF <- PCRF: 24. AAA
+PCRF <- PGW: 25. RAA
+
+
+box over UE, PGW #white:<color:#black>26. EPS bearer update \n //QCI-1, ARP (emergency)//
+
+UE <- P-CSCF: 26. 200OK (INVITE)
+
+linear
+UE -> P-CSCF: 27. ACK (200OK)
+P-CSCF -> E-CSCF: 27. ACK (200OK)
+E-CSCF -> MSC: 27. ACK (200OK)
+MSC -> ILEC/PSAP
+linear off
