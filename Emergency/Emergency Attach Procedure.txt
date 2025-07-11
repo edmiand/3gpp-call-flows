@@ -1,0 +1,53 @@
+### Emergency Attach procedure ####
+
+title <size:15><color:#black>Emergency Attach procedure</size>
+
+participant UE
+participant eNB
+participant MME
+participant SGW
+participant PGW
+participant PCRF
+participant GMLC
+participant HSS
+
+
+note left of UE: 1. Emergency \n     call
+UE -> MME: 2. Attach Request \n//Emergencty
+UE <-- MME: 3. Identity Request
+
+linear
+UE --> MME: 4. Identity Response \n//IMSI//
+MME --> HSS: 5. Authentication Information Request \n//        IMSI//
+MME <-- HSS: 6. Authentication Information Answer \n//Authentication Vector//
+UE <-- MME: 7. Authentication Request \n//RAND, AUTN//
+linear off
+
+UE --> MME: 8. Authenticaton Response \n //RES//
+
+UE <-- MME: 9. Secutiry Mode Command
+UE --> MME: 10. Secutiry Mode Complete
+
+MME -> SGW: 11. Create Seession\n       Request \n//APN, Bearer QoS//
+SGW -> PGW: 12. Create Seession\n       Request \n//APN, Bearer QoS//
+PGW -> PCRF: 13. CCR \n//APN, Bearer QoS//
+
+PGW <- PCRF: 14. CCA \n//Bearer, QoS
+
+SGW <- PGW: 15. Create Seession\n       Response
+MME <- SGW: 16. Create Seession\n       Response
+
+UE <- MME: 17. Attach Accept
+
+
+box over UE, eNB #white:<color:#black>18. RRC Connnection Reconfiguration
+UE -> MME: 19. Attach Accept
+
+MME -> SGW: 20. Modify Bearer\n      Request
+MME <- SGW: 21. Modify Bearer\n      Response
+
+SGW -> GMLC: 22. Subscriber Location Report
+SGW <- GMLC: 23. Subscriber Location Report Ack
+
+
+
