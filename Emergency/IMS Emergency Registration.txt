@@ -1,0 +1,39 @@
+### IMS Emergency registration ####
+participant UE
+participant EPC
+participant eNodeB
+participant P-CSCF
+participant I-CSCF
+participant S-CSCF
+participant HSS
+
+
+
+UE -> P-CSCF: 1. REGISTER \n//Contact: sos//
+P-CSCF -> I-CSCF: 2. REGISTER \n//Contact: sos//
+I-CSCF -> HSS: 3. UAR \n//emergency//
+I-CSCF <- HSS: 4. UAA
+I-CSCF -> S-CSCF: 5. REGISTER \n//Contact: sos//
+S-CSCF -> HSS: 6. MAR 
+S-CSCF <- HSS: 7. MAA \n//Ck, Ik, RAND, AUTN, XRES//
+I-CSCF <- S-CSCF: 8. 401 Unauthorized \n//Ck, Ik, RAND, AUTN//
+P-CSCF <- I-CSCF: 9. 401 Unauthorized \n//Ck, Ik, RAND, AUTN//
+UE <- P-CSCF: 10. 401 Unauthorized \n//RAND, AUTN//
+box over UE #white:<color:#black>11. Derive Ck, Ik, RES and enable IPSec
+box over P-CSCF #white:<color:#black>12. Enable IPSec Ck, Ik
+UE -> P-CSCF: 13. REGISTER \n//Contact: sos, RES//
+P-CSCF -> I-CSCF: 14. REGISTER \n//Contact: sos, RES//
+I-CSCF -> HSS: 15. UAR \n//emergency//
+I-CSCF <- HSS: 16. UAA
+I-CSCF -> S-CSCF: 17. REGISTER \n//Contact: sos//
+box over S-CSCF #white:<color:#black>18. Check \nXRES=RES
+
+S-CSCF -> HSS: 19. SAR 
+S-CSCF <- HSS: 20. SAA
+
+I-CSCF <- S-CSCF: 21. 200 OK \nPAU
+P-CSCF <- I-CSCF: 22. 200 OK \nPAU
+UE <- P-CSCF: 10. 23. 200 OK \nPAU
+
+
+
