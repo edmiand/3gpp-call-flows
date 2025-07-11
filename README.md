@@ -1,2 +1,1 @@
-# 3gpp-call-flows
-3GPP-Call-Flows
+#3GPP Call Flows
