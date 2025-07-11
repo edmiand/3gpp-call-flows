@@ -1,6 +1,6 @@
 ### NG911 Emergency call establishment ####
 
-title <size:15><color:#black>NG911 Emergency call establishment</size>
+title <size:15><color:#black>NG911 Emergency call establishment (with Preconditions)</size>
 
 participant UE
 participant eNB
